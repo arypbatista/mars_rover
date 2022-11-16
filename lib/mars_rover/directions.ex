@@ -24,4 +24,10 @@ defmodule MarsRover.Directions do
   def delta(direction) do
     Map.get(@direction_delta, direction)
   end
+
+  def opposite(direction) do
+    direction
+    |> next
+    |> next
+  end
 end
