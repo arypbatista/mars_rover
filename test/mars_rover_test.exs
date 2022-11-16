@@ -70,7 +70,7 @@ defmodule MarsRoverTest do
   test "Rotate 5 times right, given a rover pointing to north" do
     orientation =
       MarsRover.new({0, 0}, :north)
-      |> MarsRover.execute([:r])
+      |> MarsRover.execute(for _ <- 1..5, do: :r)
       |> MarsRover.orientation()
 
     assert :east = orientation
