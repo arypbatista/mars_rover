@@ -3,7 +3,7 @@ defmodule MarsRover.Rover do
   alias MarsRover.Rover
 
   @enforce_keys [:position, :orientation]
-  defstruct [:position, :orientation]
+  defstruct [:position, :orientation, :world]
 
   def new(position, orientation) do
     %Rover{position: position, orientation: orientation}
@@ -16,32 +16,45 @@ defmodule MarsRover.Rover do
         case last_execution_result do
           :ok -> {:cont, execute_command(command, updated_rover)}
           :invalid_command -> {:halt, {last_execution_result, updated_rover}}
+          :aborted -> {:halt, {last_execution_result, updated_rover}}
         end
       end)
 
     updated_rover
   end
 
-  def execute_command(:f, %Rover{position: {x, y}, orientation: orientation}) do
-    {delta_x, delta_y} = Directions.delta(orientation)
-    {:ok, %Rover{position: {x + delta_x, y + delta_y}, orientation: orientation}}
+  def execute_command(:f, %Rover{orientation: orientation} = rover) do
+    execute_move(rover, orientation)
   end
 
-  def execute_command(:b, %Rover{position: {x, y}, orientation: orientation}) do
-    {delta_x, delta_y} = Directions.delta(orientation)
-    {:ok, %Rover{position: {x + delta_x * -1, y + delta_y * -1}, orientation: orientation}}
+  def execute_command(:b, %Rover{orientation: orientation} = rover) do
+    execute_move(rover, Directions.opposite(orientation))
   end
 
-  def execute_command(:l, %Rover{position: position, orientation: orientation}) do
-    {:ok, %Rover{position: position, orientation: Directions.prev(orientation)}}
+  def execute_command(:l, %Rover{orientation: orientation} = rover) do
+    {:ok, %Rover{rover | orientation: Directions.prev(orientation)}}
   end
 
-  def execute_command(:r, %Rover{position: position, orientation: orientation}) do
-    {:ok, %Rover{position: position, orientation: Directions.next(orientation)}}
+  def execute_command(:r, %Rover{orientation: orientation} = rover) do
+    {:ok, %Rover{rover | orientation: Directions.next(orientation)}}
   end
 
   def execute_command(_, rover) do
     {:invalid_command, rover}
+  end
+
+  def execute_move(%Rover{position: {x, y}, world: world} = rover, direction) do
+    {delta_x, delta_y} = Directions.delta(direction)
+
+    if is_nil(world) do
+      {:ok, %Rover{rover | position: {x + delta_x, y + delta_y}}}
+    else
+      if World.empty?(world, {x, y}) do
+        {:ok, %Rover{rover | position: {x + delta_x, y + delta_y}}}
+      else
+        {:aborted, rover}
+      end
+    end
   end
 
   def position(%Rover{position: position}) do
@@ -50,5 +63,9 @@ defmodule MarsRover.Rover do
 
   def orientation(%Rover{orientation: orientation}) do
     orientation
+  end
+
+  def added_to_world(rover, world) do
+    %Rover{rover | world: world}
   end
 end

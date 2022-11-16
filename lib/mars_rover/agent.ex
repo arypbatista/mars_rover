@@ -19,6 +19,11 @@ defmodule MarsRover.Agent do
     Agent.get(agent, &Rover.orientation/1)
   end
 
+  def added_to_world(agent, world) do
+    Agent.update(agent, &Rover.added_to_world(&1, world))
+    agent
+  end
+
   def state(agent) do
     Agent.get(agent, & &1)
   end

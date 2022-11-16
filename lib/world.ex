@@ -1,7 +1,18 @@
 defmodule World do
-  
-  defdelegate new(name), to: World.World
-  defdelegate place_rover(world, rover), to: World.World
-  defdelegate get(world, position), to: World.World
+  alias World.Agent
 
+  def new(name, rovers \\ [])
+  defdelegate new(name, rovers), to: Agent
+
+  def place_rover(world, rover) do
+    %MarsRover.Rover{position: position} = rover |> MarsRover.state()
+    true = Agent.empty?(world, position)
+    Agent.place_rover(world, rover)
+    MarsRover.added_to_world(rover, world)
+    world
+  end
+
+  defdelegate get(world, position), to: Agent
+
+  defdelegate empty?(world, position), to: Agent
 end

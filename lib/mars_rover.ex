@@ -15,4 +15,6 @@ defmodule MarsRover do
   defdelegate position(rover), to: Agent
   defdelegate orientation(rover), to: Agent
   defdelegate state(rover), to: Agent
+
+  defdelegate added_to_world(rover, world), to: Agent
 end
