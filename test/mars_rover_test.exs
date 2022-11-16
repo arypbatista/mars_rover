@@ -37,7 +37,7 @@ defmodule MarsRoverTest do
       |> MarsRover.execute([:f])
       |> MarsRover.position()
 
-    assert { 1, 0 } = position
+    assert {1, 0} = position
   end
 
   test "Move forward two times, given a rover pointing to north" do
@@ -77,13 +77,16 @@ defmodule MarsRoverTest do
   end
 
   test "Given a list of commands with an invalid one, stop executing commands after it" do
-    { position, orientation } =
-        MarsRover.new({0, 0}, :north)
-        |> MarsRover.execute([
-          :f, :invalid, :r, :b
-        ])
+    %MarsRover.Rover{position: position, orientation: orientation} =
+      MarsRover.new({0, 0}, :north)
+      |> MarsRover.execute([
+        :f,
+        :invalid,
+        :r,
+        :b
+      ])
 
-    assert { 0, 1 } = position
+    assert {0, 1} = position
     assert :north = orientation
   end
 end

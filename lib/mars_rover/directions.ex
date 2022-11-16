@@ -1,21 +1,20 @@
 defmodule MarsRover.Directions do
-
   @directions [:north, :east, :south, :west]
 
   @direction_delta %{
-    north: { 0,  1},
-    east:  { 1,  0},
-    south: { 0, -1},
-    west:  {-1, 0 }
+    north: {0, 1},
+    east: {1, 0},
+    south: {0, -1},
+    west: {-1, 0}
   }
 
   def next(direction, directions \\ @directions) do
     directions
-    |> Enum.drop_while(& &1 != direction)
+    |> Enum.drop_while(&(&1 != direction))
     |> case do
-         [ _, second | _ ] -> second
-         _ -> hd(directions)
-       end
+      [_, second | _] -> second
+      _ -> hd(directions)
+    end
   end
 
   def prev(direction) do
