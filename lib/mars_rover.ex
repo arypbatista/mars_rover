@@ -1,5 +1,5 @@
 defmodule MarsRover do
-  alias MarsRover.Rover
+  alias MarsRover.Agent
 
   @type orientation :: :north | :south | :west | :east
 
@@ -7,11 +7,12 @@ defmodule MarsRover do
   @type commands :: [command]
 
   @type position :: {integer, integer}
-  @spec new(position, orientation) :: {position, orientation}
+  @spec new(position, orientation) :: pid
   def new(position \\ {0, 0}, orientation \\ :north)
-  defdelegate new(position, orientation), to: Rover
+  defdelegate new(position, orientation), to: Agent
 
-  defdelegate execute(rover, commands), to: Rover
-  defdelegate position(rover), to: Rover
-  defdelegate orientation(rover), to: Rover
+  defdelegate execute(rover, commands), to: Agent
+  defdelegate position(rover), to: Agent
+  defdelegate orientation(rover), to: Agent
+  defdelegate state(rover), to: Agent
 end

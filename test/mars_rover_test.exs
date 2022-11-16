@@ -1,7 +1,4 @@
 defmodule MarsRoverTest do
-  use ExUnit.Case
-  doctest MarsRover
-
   use ExUnit.Case, async: true
 
   test "Move forward, given a rover pointing to north" do
@@ -85,6 +82,7 @@ defmodule MarsRoverTest do
         :r,
         :b
       ])
+      |> MarsRover.state()
 
     assert {0, 1} = position
     assert :north = orientation
